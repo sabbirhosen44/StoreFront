@@ -48,9 +48,9 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-montserrat);
 }
 
 :root {
@@ -138,5 +138,9 @@
 
   .card-overlay {
     @apply absolute inset-0 bg-foreground/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100;
+  }
+
+  .container-center {
+    @apply container mx-auto px-6 md:px-12;
   }
 }
