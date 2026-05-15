@@ -1,0 +1,142 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: oklch(0.98 0.006 75);
+  --color-foreground: oklch(0.23 0 0);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.23 0 0);
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.23 0 0);
+  --color-primary: oklch(0.62 0.1 80);
+  --color-primary-foreground: oklch(1 0 0);
+  --color-secondary: oklch(0.94 0.02 75);
+  --color-secondary-foreground: oklch(0.23 0 0);
+  --color-muted: oklch(0.95 0.01 75);
+  --color-muted-foreground: oklch(0.50 0 0);
+  --color-accent: oklch(0.90 0.03 75);
+  --color-accent-foreground: oklch(0.23 0 0);
+  --color-destructive: oklch(0.60 0.22 25);
+  --color-border: oklch(0.88 0.01 75);
+  --color-input: oklch(0.88 0.01 75);
+  --color-ring: oklch(0.62 0.1 80);
+  --color-chart-1: oklch(0.62 0.1 80);
+  --color-chart-2: oklch(0.75 0.08 80);
+  --color-chart-3: oklch(0.52 0.22 25);
+  --color-chart-4: oklch(0.60 0.12 160);
+  --color-chart-5: oklch(0.45 0.05 75);
+  --color-sidebar: oklch(0.94 0.02 75);
+  --color-sidebar-foreground: oklch(0.23 0 0);
+  --color-sidebar-primary: oklch(0.62 0.1 80);
+  --color-sidebar-primary-foreground: oklch(1 0 0);
+  --color-sidebar-accent: oklch(0.90 0.03 75);
+  --color-sidebar-accent-foreground: oklch(0.23 0 0);
+  --color-sidebar-border: oklch(0.88 0.01 75);
+  --color-sidebar-ring: oklch(0.62 0.1 80);
+  --color-furniro-gold: oklch(0.62 0.1 80);
+  --color-furniro-beige: oklch(0.94 0.02 75);
+  --color-furniro-badge-sale: oklch(0.52 0.22 25);
+  --color-furniro-badge-new: oklch(0.60 0.12 180);
+  --color-furniro-price-old: oklch(0.73 0 0);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+}
+
+:root {
+  --background: oklch(0.98 0.006 75);
+  --foreground: oklch(0.23 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.23 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.23 0 0);
+  --primary: oklch(0.62 0.1 80);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.94 0.02 75);
+  --secondary-foreground: oklch(0.23 0 0);
+  --muted: oklch(0.95 0.01 75);
+  --muted-foreground: oklch(0.50 0 0);
+  --accent: oklch(0.90 0.03 75);
+  --accent-foreground: oklch(0.23 0 0);
+  --destructive: oklch(0.60 0.22 25);
+  --border: oklch(0.88 0.01 75);
+  --input: oklch(0.88 0.01 75);
+  --ring: oklch(0.62 0.1 80);
+  --radius: 0.625rem;
+  --furniro-gold: oklch(0.62 0.1 80);
+  --furniro-beige: oklch(0.94 0.02 75);
+}
+
+.dark {
+  --background: oklch(0.13 0 0);
+  --foreground: oklch(0.92 0.01 75);
+  --card: oklch(0.18 0 0);
+  --card-foreground: oklch(0.92 0.01 75);
+  --popover: oklch(0.18 0 0);
+  --popover-foreground: oklch(0.92 0.01 75);
+  --primary: oklch(0.68 0.1 80);
+  --primary-foreground: oklch(0.13 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.92 0.01 75);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.55 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.92 0.01 75);
+  --destructive: oklch(0.60 0.22 25);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.68 0.1 80);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .bg-furniro-beige {
+    background-color: var(--furniro-beige);
+  }
+
+  .text-furniro-gold {
+    color: var(--furniro-gold);
+  }
+
+  .badge-sale {
+    @apply text-white text-xs font-semibold rounded-full px-2 py-1;
+    background-color: oklch(0.52 0.22 25);
+  }
+
+  .badge-new {
+    @apply text-white text-xs font-semibold rounded-full px-2 py-1;
+    background-color: oklch(0.60 0.12 180);
+  }
+
+  .text-price-old {
+    color: oklch(0.73 0 0);
+    @apply line-through text-sm;
+  }
+
+  .card-overlay {
+    @apply absolute inset-0 bg-foreground/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100;
+  }
+}
