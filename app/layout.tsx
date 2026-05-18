@@ -30,18 +30,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${montserrat.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${poppins.variable} ${montserrat.variable}`}
     >
-      <body>
+      <body className="min-h-screen bg-background text-foreground antialiased transition-colors duration-300">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
+          enableSystem={false}
         >
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <div className="flex min-h-screen flex-col bg-background text-foreground">
+            <Header />
+            <main className="flex-1 bg-background">{children}</main>
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>
