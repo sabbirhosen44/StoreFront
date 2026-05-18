@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
-    <section className="relative container-center w-full min-h-[calc(100vh-5rem)] bg-[url('/images/hero-bg.jpg')] bg-cover bg-center md:bg-left flex items-center py-12 md:py-0 overflow-hidden">
+    <section className="relative w-full min-h-[calc(100vh-5rem)] bg-[url('/images/hero-bg.jpg')] bg-cover bg-center md:bg-left flex items-center py-12 md:py-0 overflow-hidden">
       <div className="absolute inset-0 bg-black/40 animate-fade-in duration-700" />
 
       <div className="relative z-10 container-center w-full flex justify-center md:justify-end">
-        <div className="bg-furniro-beige rounded-xl p-6 sm:p-8 md:pt-12 md:pb-8 md:px-10 max-w-full sm:max-w-144 md:max-w-160 w-full shadow-sm animate-in fade-in slide-in-from-right-20 duration-1500 ease-out">
+        <div className="bg-furniro-beige rounded-xl p-6 sm:p-8 md:pt-12 md:pb-8 md:px-10 max-w-full sm:max-w-xl md:max-w-160 w-full shadow-sm animate-in fade-in slide-in-from-right-20 duration-1500 ease-out">
           <span className="text-foreground font-semibold tracking-[3px] text-xs sm:text-sm md:text-base block mb-1 md:mb-2 delay-100 animate-in fade-in slide-in-from-y-2 duration-700 fill-mode-both">
             New Arrival
           </span>
