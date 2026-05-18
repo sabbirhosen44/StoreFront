@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { HEADER_ACTIONS, NAV_LINKS } from "@/constants/navigation";
 import { Menu } from "lucide-react";
 import Image from "next/image";
@@ -44,7 +45,9 @@ export default function Header() {
         </nav>
 
         {/* --- Icon Actions --- */}
-        <div className="flex items-center gap-4 md:gap-8">
+        <div className="flex items-center gap-2 md:gap-4">
+          <ThemeToggle />
+
           {HEADER_ACTIONS.map((action) => (
             <Button
               key={action.id}

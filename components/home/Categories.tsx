@@ -35,7 +35,7 @@ export default async function Categories() {
   }
 
   return (
-    <section className="container-center w-full bg-background py-14 md:py-20 overflow-hidden">
+    <section className=" w-full bg-background py-14 md:py-20 overflow-hidden">
       <div className="container-center relative group">
         <div className="text-center space-y-2 mb-10 md:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading text-foreground tracking-tight">

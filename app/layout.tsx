@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import type { Metadata } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -32,9 +33,16 @@ export default function RootLayout({
       className={`${poppins.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body>
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
