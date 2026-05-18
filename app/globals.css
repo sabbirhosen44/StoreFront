@@ -48,7 +48,7 @@
   --color-furniro-beige: var(--furniro-beige);
 
   --color-furniro-badge-sale: oklch(0.52 0.22 25);
-  --color-furniro-badge-new: oklch(0.60 0.12 180);
+  --color-furniro-badge-new: oklch(0.6 0.12 180);
 
   --color-furniro-price-old: oklch(0.73 0 0);
 
@@ -87,7 +87,7 @@
   --accent: oklch(0.92 0.02 75);
   --accent-foreground: oklch(0.22 0 0);
 
-  --destructive: oklch(0.60 0.22 25);
+  --destructive: oklch(0.6 0.22 25);
 
   --border: oklch(0.89 0.01 75);
   --input: oklch(0.89 0.01 75);
@@ -163,7 +163,7 @@
 
   .badge-new {
     @apply text-white text-xs font-semibold rounded-full px-2 py-1;
-    background-color: oklch(0.60 0.12 180);
+    background-color: oklch(0.6 0.12 180);
   }
 
   .text-price-old {

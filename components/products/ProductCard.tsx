@@ -1,9 +1,9 @@
-// components/products/ProductCard.tsx
 "use client";
 
 import { Product } from "@/types/product";
 import { Heart, Share2, ArrowRightLeft } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -22,7 +22,10 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
   // --- LIST VIEW MODE ---
   if (viewMode === "list") {
     return (
-      <div className="flex flex-col sm:flex-row w-full bg-furniro-beige/40 dark:bg-card border border-border/40 overflow-hidden rounded-sm group transition-all duration-300 hover:shadow-md cursor-pointer">
+      <Link
+        href={`/products/${product.id}`}
+        className="flex flex-col sm:flex-row w-full bg-furniro-beige/40 dark:bg-card border border-border/40 overflow-hidden rounded-sm group transition-all duration-300 hover:shadow-md cursor-pointer"
+      >
         <div className="relative w-full sm:w-72 aspect-square shrink-0 bg-muted">
           <Image
             src={thumbnail}
@@ -64,7 +67,10 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
               )}
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-6 border-t border-border/60 pt-4">
+          <div
+            className="flex flex-wrap items-center gap-6 border-t border-border/60 pt-4"
+            onClick={(e) => e.stopPropagation()} // Prevents layout link click when firing button functions
+          >
             <Button className="bg-furniro-gold text-white font-semibold py-6 px-8 rounded-sm hover:bg-furniro-gold/90 transition-all cursor-pointer">
               Add to cart
             </Button>
@@ -84,13 +90,16 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
             </button>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
   // --- GRID VIEW MODE ---
   return (
-    <div className="group relative flex flex-col w-full bg-furniro-beige/40 dark:bg-card overflow-hidden rounded-sm transition-all duration-300 cursor-pointer">
+    <Link
+      href={`/products/${product.id}`}
+      className="group relative flex flex-col w-full bg-furniro-beige/40 dark:bg-card overflow-hidden rounded-sm transition-all duration-300 cursor-pointer"
+    >
       <div className="relative w-full aspect-square overflow-hidden bg-muted">
         <Image
           src={thumbnail}
@@ -101,7 +110,6 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
           unoptimized
         />
 
-        {/* Badges derived via global custom color rules */}
         {isSale && (
           <span className="absolute top-6 right-6 size-12 bg-furniro-badge-sale text-white rounded-full flex items-center justify-center text-sm font-medium z-20">
             -30%
@@ -114,7 +122,10 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
         )}
 
         {/* Hover Action Layer Overlay */}
-        <div className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 z-10 gap-6">
+        <div
+          className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 z-10 gap-6"
+          onClick={(e) => e.stopPropagation()} // Prevents redirection when overlay panel items are clicked
+        >
           <Button className="w-full max-w-[200px] bg-background text-furniro-gold font-semibold py-6 rounded-sm shadow-sm hover:bg-furniro-gold hover:text-white transition-all cursor-pointer text-base">
             Add to cart
           </Button>
@@ -164,6 +175,6 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
