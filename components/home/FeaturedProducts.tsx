@@ -3,7 +3,6 @@ import { Product } from "@/types/product";
 import Image from "next/image";
 import Link from "next/link";
 
-// Helper for formatting prices
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -14,7 +13,6 @@ const formatPrice = (price: number) => {
     .replace("$", "$ ");
 };
 
-// Cleans up image URLs
 const getCleanImage = (images: string[] | undefined): string => {
   const fallbackImage =
     "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=736&auto=format&fit=crop";
@@ -34,7 +32,7 @@ export default async function FeaturedProducts() {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`,
       {
         next: { revalidate: 60 },
-      }
+      },
     );
 
     if (!res.ok) throw new Error("Failed to fetch products");
@@ -94,7 +92,7 @@ export default async function FeaturedProducts() {
                     </div>
                   )}
 
-                  <ProductActionsOverlay productId={product.id} />
+                  <ProductActionsOverlay product={product} />
                 </div>
 
                 <div className="p-4 flex flex-col flex-grow bg-secondary/30 min-h-[145px]">

@@ -7,8 +7,18 @@ import { HEADER_ACTIONS, NAV_LINKS } from "@/constants/navigation";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { toggleSidebar } from "@/store/slices/cartSlice";
+import CartSidebar from "@/components/cart/CartSidebar";
 
 export default function Header() {
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart.items);
+  const totalCartCount = cartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
+
   return (
     <header className="sticky top-0 z-50 w-full bg-background py-4 shadow-sm border-b border-border">
       <div className="container-center flex items-center justify-between ">
@@ -48,23 +58,38 @@ export default function Header() {
         <div className="flex items-center gap-2 md:gap-4">
           <ThemeToggle />
 
-          {HEADER_ACTIONS.map((action) => (
-            <Button
-              key={action.id}
-              variant="ghost"
-              size="icon"
-              className={`hover:bg-accent/50 cursor-pointer relative ${
-                !action.showOnMobile ? "hidden sm:flex" : "flex"
-              }`}
-            >
-              <action.icon className="size-6 stroke-[1.5px]" />
-              {action.hasBadge && (
-                <span className="absolute -top-1 -right-1 bg-furniro-gold text-white text-[0.75rem] size-4 rounded-full flex items-center justify-center font-bold">
-                  0
-                </span>
-              )}
-            </Button>
-          ))}
+          {HEADER_ACTIONS.map((action) => {
+            const isCartButton =
+              action.id === "cart" || action.label?.toLowerCase() === "cart";
+
+            return (
+              <Button
+                key={action.id}
+                variant="ghost"
+                size="icon"
+                onClick={
+                  isCartButton ? () => dispatch(toggleSidebar()) : undefined
+                }
+                className={`hover:bg-accent/50 cursor-pointer relative ${
+                  !action.showOnMobile ? "hidden sm:flex" : "flex"
+                }`}
+              >
+                <action.icon className="size-6 stroke-[1.5px]" />
+
+                {action.hasBadge && isCartButton && totalCartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-furniro-gold text-white text-[0.75rem] size-4 rounded-full flex items-center justify-center font-bold animate-in fade-in zoom-in duration-200">
+                    {totalCartCount}
+                  </span>
+                )}
+
+                {action.hasBadge && !isCartButton && (
+                  <span className="absolute -top-1 -right-1 bg-furniro-gold text-white text-[0.75rem] size-4 rounded-full flex items-center justify-center font-bold">
+                    0
+                  </span>
+                )}
+              </Button>
+            );
+          })}
 
           {/* --- Mobile Menu --- */}
           <div className="md:hidden">
@@ -74,7 +99,7 @@ export default function Header() {
                   <Menu className="size-7" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="top" className="h-96  bg-background">
+              <SheetContent side="top" className="h-96 bg-background">
                 <nav className="flex flex-col items-center gap-8 m-12">
                   {NAV_LINKS.map((item) => (
                     <Link
@@ -91,6 +116,8 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      <CartSidebar />
     </header>
   );
 }

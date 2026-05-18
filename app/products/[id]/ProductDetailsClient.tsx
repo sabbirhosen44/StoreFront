@@ -12,6 +12,8 @@ import {
 import { Product } from "@/types/product";
 import Link from "next/link";
 import { useState } from "react";
+import { useAppDispatch } from "@/store";
+import { addToCart, toggleSidebar } from "@/store/slices/cartSlice";
 
 interface ProductDetailsClientProps {
   product: Product;
@@ -22,6 +24,7 @@ export default function ProductDetailsClient({
   product,
   relatedProducts,
 }: ProductDetailsClientProps) {
+  const dispatch = useAppDispatch();
   const images =
     product.images && product.images.length > 0
       ? product.images
@@ -29,6 +32,22 @@ export default function ProductDetailsClient({
 
   const [activeImage, setActiveImage] = useState<string>(images[0]);
   const [activeTab, setActiveTab] = useState<string>("description");
+  const [quantity, setQuantity] = useState<number>(1);
+
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+
+  const handleIncreaseQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ product, quantity }));
+    dispatch(toggleSidebar());
+  };
 
   return (
     <div className="w-full min-h-screen">
@@ -148,24 +167,30 @@ export default function ProductDetailsClient({
               <div className="flex items-center border border-muted-foreground/60 rounded-xl h-14 bg-background overflow-hidden px-1">
                 <button
                   type="button"
+                  onClick={handleDecreaseQuantity}
                   className="w-10 h-full flex items-center justify-center text-lg font-medium hover:bg-muted/40 transition-colors rounded-l-lg cursor-pointer"
                 >
                   -
                 </button>
                 <Input
                   type="text"
-                  defaultValue="1"
+                  value={quantity}
+                  readOnly
                   className="w-10 text-center h-full border-none shadow-none focus-visible:ring-0 text-sm font-semibold pointer-events-none p-0 bg-transparent"
                 />
                 <button
                   type="button"
+                  onClick={handleIncreaseQuantity}
                   className="w-10 h-full flex items-center justify-center text-lg font-medium hover:bg-muted/40 transition-colors rounded-r-lg cursor-pointer"
                 >
                   +
                 </button>
               </div>
 
-              <Button className="bg-transparent text-foreground hover:bg-foreground hover:text-background border border-foreground h-14 px-6 sm:px-10 rounded-xl font-normal text-base transition-all duration-200 shadow-sm flex-1 sm:flex-none cursor-pointer">
+              <Button
+                onClick={handleAddToCart}
+                className="bg-transparent text-foreground hover:bg-foreground hover:text-background border border-foreground h-14 px-6 sm:px-10 rounded-xl font-normal text-base transition-all duration-200 shadow-sm flex-1 sm:flex-none cursor-pointer"
+              >
                 Add To Cart
               </Button>
               <Button className="bg-transparent text-foreground hover:bg-foreground hover:text-background border border-foreground h-14 px-6 sm:px-10 rounded-xl font-normal text-base transition-all duration-200 shadow-sm flex-1 sm:flex-none cursor-pointer">

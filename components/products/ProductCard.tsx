@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useAppDispatch } from "@/store";
+import { addToCart, toggleSidebar } from "@/store/slices/cartSlice";
 
 interface ProductCardProps {
   product: Product;
@@ -13,11 +15,19 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, viewMode }: ProductCardProps) {
+  const dispatch = useAppDispatch();
   const [isLiked, setIsLiked] = useState(false);
   const thumbnail = product.images?.[0] || "https://placehold.co/600x400";
 
   const isSale = product.id % 3 === 0;
   const isNew = product.id % 4 === 0;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(addToCart({ product, quantity: 1 }));
+    dispatch(toggleSidebar());
+  };
 
   // --- LIST VIEW MODE ---
   if (viewMode === "list") {
@@ -69,9 +79,12 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
           </div>
           <div
             className="flex flex-wrap items-center gap-6 border-t border-border/60 pt-4"
-            onClick={(e) => e.stopPropagation()} // Prevents layout link click when firing button functions
+            onClick={(e) => e.stopPropagation()}
           >
-            <Button className="bg-furniro-gold text-white font-semibold py-6 px-8 rounded-sm hover:bg-furniro-gold/90 transition-all cursor-pointer">
+            <Button
+              onClick={handleAddToCart}
+              className="bg-furniro-gold text-white font-semibold py-6 px-8 rounded-sm hover:bg-furniro-gold/90 transition-all cursor-pointer"
+            >
               Add to cart
             </Button>
             <button
@@ -124,9 +137,12 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
         {/* Hover Action Layer Overlay */}
         <div
           className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 z-10 gap-6"
-          onClick={(e) => e.stopPropagation()} // Prevents redirection when overlay panel items are clicked
+          onClick={(e) => e.stopPropagation()}
         >
-          <Button className="w-full max-w-[200px] bg-background text-furniro-gold font-semibold py-6 rounded-sm shadow-sm hover:bg-furniro-gold hover:text-white transition-all cursor-pointer text-base">
+          <Button
+            onClick={handleAddToCart}
+            className="w-full max-w-[200px] bg-background text-furniro-gold font-semibold py-6 rounded-sm shadow-sm hover:bg-furniro-gold hover:text-white transition-all cursor-pointer text-base"
+          >
             Add to cart
           </Button>
           <div className="flex items-center gap-5 text-white text-sm font-semibold select-none">

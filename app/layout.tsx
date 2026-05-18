@@ -1,9 +1,10 @@
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import { StoreProvider } from "@/components/store-provider";
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -34,17 +35,20 @@ export default function RootLayout({
       className={`${poppins.variable} ${montserrat.variable}`}
     >
       <body className="min-h-screen bg-background text-foreground antialiased transition-colors duration-300">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-        >
-          <div className="flex min-h-screen flex-col bg-background text-foreground">
-            <Header />
-            <main className="flex-1 bg-background">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            <div className="flex min-h-screen flex-col bg-background text-foreground">
+              <Header />
+              <main className="flex-1 bg-background">{children}</main>
+              <Footer />
+            </div>
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );

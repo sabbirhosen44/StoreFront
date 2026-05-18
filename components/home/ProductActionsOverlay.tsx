@@ -1,19 +1,25 @@
 "use client";
 
+import { useAppDispatch } from "@/store";
+import { addToCart, toggleSidebar } from "@/store/slices/cartSlice";
+import { Product } from "@/types/product";
 import { PRODUCT_ACTIONS } from "@/constants/productActions";
 
 type OverlayProps = {
-  productId: number;
+  product: Product;
 };
 
-export default function ProductActionsOverlay({ productId }: OverlayProps) {
+export default function ProductActionsOverlay({ product }: OverlayProps) {
+  const dispatch = useAppDispatch();
+
   return (
     <div className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-6 z-10 px-4">
       <button
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log("Add to cart:", productId);
+          dispatch(addToCart({ product, quantity: 1 }));
+          dispatch(toggleSidebar());
         }}
         className="w-full max-w-[202px] bg-white text-furniro-gold font-semibold py-3 px-6 transition-colors hover:bg-furniro-gold hover:text-white cursor-pointer shadow-sm relative z-20"
       >
@@ -27,7 +33,7 @@ export default function ProductActionsOverlay({ productId }: OverlayProps) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              console.log(action.log, productId);
+              console.log(action.log, product.id);
             }}
             className="flex items-center gap-1.5 hover:text-furniro-gold transition-colors cursor-pointer bg-transparent border-none"
           >
