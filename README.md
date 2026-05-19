@@ -75,6 +75,11 @@ StoreFront is a full-featured e-commerce platform demonstrating modern Next.js p
 - **Users Management** — View users list with search and filtering
 - **Dashboard** — Display product, category, and user counts
 
+> **Admin login**
+>
+> - Email: `adminsabbir@gmail.com`
+> - Password: `123456`
+
 ---
 
 ## 🏗 Architecture
