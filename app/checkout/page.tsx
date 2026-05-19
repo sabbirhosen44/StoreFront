@@ -1,331 +1,257 @@
 "use client";
 
-import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "@/store";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { BILLING_FIELDS } from "@/constants/checkout";
+import { CheckoutFormSchema, checkoutSchema } from "@/schemas/checkout";
+import { useAppDispatch, useAppSelector } from "@/store";
 import { clearCart } from "@/store/slices/cartSlice";
-import { CheckoutFormValues } from "@/types/cart";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function CheckoutPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { items } = useAppSelector((state) => state.cart);
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0,
-  );
-
-  const [formValues, setFormValues] = useState<Partial<CheckoutFormValues>>({
-    country: "Bangladesh",
-    province: "Western Province",
-    paymentMethod: "bank-transfer",
-  });
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof CheckoutFormValues, string>>
-  >({});
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({ ...prev, [name]: value }));
-    if (errors[name as keyof CheckoutFormValues]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  );
 
-  const validateForm = (): boolean => {
-    const tempErrors: Partial<Record<keyof CheckoutFormValues, string>> = {};
-    const requiredFields: (keyof CheckoutFormValues)[] = [
-      "firstName",
-      "lastName",
-      "country",
-      "streetAddress",
-      "townCity",
-      "province",
-      "zipCode",
-      "phone",
-      "email",
-    ];
+  const form = useForm<CheckoutFormSchema>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      companyName: "",
+      country: "Bangladesh",
+      streetAddress: "",
+      townCity: "",
+      province: "Dhaka Division",
+      zipCode: "",
+      phone: "",
+      email: "",
+      additionalInfo: "",
+      paymentMethod: "bank-transfer",
+    },
+  });
 
-    requiredFields.forEach((field) => {
-      if (!formValues[field]?.toString().trim()) {
-        tempErrors[field] = "This field is explicitly required";
-      }
-    });
+  const selectedPaymentMethod = form.watch("paymentMethod");
 
-    if (formValues.email && !/\S+@\S+\.\S+/.test(formValues.email)) {
-      tempErrors.email = "Please input a valid email layout";
-    }
-
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm() || items.length === 0) return;
-
+  const onSubmit = (data: CheckoutFormSchema) => {
+    if (items.length === 0) return;
     setIsProcessing(true);
 
-    // Mock API Payment Flow Engine Timing Pipeline
     setTimeout(() => {
       setIsProcessing(false);
       alert(
-        "🎉 Order tracking finalized successfully! Payment verification complete.",
+        "🎉 Order tracking finalized successfully! Payment verification complete."
       );
       dispatch(clearCart());
       router.push("/");
     }, 2500);
   };
 
+  const renderLabel = (label: string, required?: boolean) => (
+    <FieldLabel className="flex items-center gap-0.5 font-heading">
+      {label}
+      {required && (
+        <span className="text-destructive font-medium select-none">*</span>
+      )}
+    </FieldLabel>
+  );
+
   return (
-    <div className="w-full min-h-screen bg-background text-foreground">
-      {/* Page Header Banner */}
-      <div className="w-full bg-[url('/images/checkout-bg.jpg')] bg-cover bg-center py-20 border-b border-border/10 relative">
+    <div className="w-full min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* HERO */}
+      <div className="w-full h-72 sm:h-80 relative flex items-center justify-center overflow-hidden border-b border-border">
+        <Image
+          src="/images/checkout-bg.jpg"
+          alt="Checkout banner background"
+          fill
+          priority
+          className="object-cover"
+        />
         <div className="absolute inset-0 bg-black/5 backdrop-blur-xs" />
-        <div className="relative flex flex-col items-center justify-center text-center">
-          <img
-            src="/images/logo.png"
-            alt=""
-            className="size-10 mb-2 object-contain"
-          />
+        <div className="relative flex flex-col items-center justify-center text-center p-4">
+          <div className="relative size-10 mb-2">
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              fill
+              className="object-contain"
+            />
+          </div>
           <h1 className="text-4xl sm:text-5xl font-medium font-heading tracking-wide">
             Checkout
           </h1>
           <div className="flex items-center gap-2 mt-3 text-sm font-medium">
             <Link
               href="/"
-              className="hover:text-furniro-gold transition-colors"
+              className="hover:text-furniro-gold transition-colors duration-200"
             >
               Home
             </Link>
-            <span className="text-muted-foreground/60">&gt;</span>
+            <span className="text-muted-foreground/60 select-none">&gt;</span>
             <span className="text-muted-foreground font-light">Checkout</span>
           </div>
         </div>
       </div>
 
+      {/* MAIN */}
       <div className="container-center py-12 lg:py-20">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start"
         >
-          {/* Form Processing Fields Section */}
+          {/* LEFT PANEL */}
           <div className="space-y-6">
             <h2 className="text-3xl font-semibold font-heading tracking-wide mb-8">
               Billing details
             </h2>
 
+            {/* FIRST & LAST NAME */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium">First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formValues.firstName || ""}
-                  onChange={handleInputChange}
-                  className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-                />
-                {errors.firstName && (
-                  <span className="text-xs text-destructive font-medium">
-                    {errors.firstName}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium">Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formValues.lastName || ""}
-                  onChange={handleInputChange}
-                  className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-                />
-                {errors.lastName && (
-                  <span className="text-xs text-destructive font-medium">
-                    {errors.lastName}
-                  </span>
-                )}
-              </div>
+              {(["firstName", "lastName"] as const).map((name) => (
+                <Field key={name}>
+                  {renderLabel(
+                    name === "firstName" ? "First Name" : "Last Name",
+                    true
+                  )}
+                  <Input
+                    {...form.register(name)}
+                    className=" rounded-xl border border-muted-foreground/40 p-6 bg-transparent focus-visible:ring-1 focus-visible:ring-furniro-gold transition-all duration-200"
+                  />
+                  <FieldError errors={[form.formState.errors[name]]} />
+                </Field>
+              ))}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">
-                Company Name (Optional)
-              </label>
-              <input
-                type="text"
-                name="companyName"
-                value={formValues.companyName || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Country / Region</label>
-              <select
-                name="country"
-                value={formValues.country || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent cursor-pointer"
+            {/* COUNTRY */}
+            <Field>
+              {renderLabel("Country / Region", true)}
+              <Select
+                defaultValue={form.getValues("country")}
+                onValueChange={(value) => form.setValue("country", value)}
               >
-                <option value="Sri Lanka">Sri Lanka</option>
-                <option value="United States">United States</option>
-                <option value="Bangladesh">Bangladesh</option>
-              </select>
-            </div>
+                <SelectTrigger className=" rounded-xl border border-muted-foreground/40 p-6 bg-transparent focus:ring-1 focus:ring-furniro-gold transition-all">
+                  <SelectValue placeholder="Select Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Bangladesh">Bangladesh</SelectItem>
+                  <SelectItem value="Sri Lanka">United Kingdom</SelectItem>
+                  <SelectItem value="United States">United States</SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError errors={[form.formState.errors.country]} />
+            </Field>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Street address</label>
-              <input
-                type="text"
-                name="streetAddress"
-                value={formValues.streetAddress || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-              />
-              {errors.streetAddress && (
-                <span className="text-xs text-destructive font-medium">
-                  {errors.streetAddress}
-                </span>
-              )}
-            </div>
+            {/* CORE METADATA LOOP */}
+            {BILLING_FIELDS.map(({ name, label, type = "text", required }) => (
+              <Field key={name}>
+                {renderLabel(label, required)}
+                <Input
+                  type={type}
+                  {...form.register(name)}
+                  className=" rounded-xl border border-muted-foreground/40 p-6 bg-transparent focus-visible:ring-1 focus-visible:ring-furniro-gold transition-all duration-200"
+                />
+                <FieldError errors={[form.formState.errors[name]]} />
+              </Field>
+            ))}
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Town / City</label>
-              <input
-                type="text"
-                name="townCity"
-                value={formValues.townCity || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-              />
-              {errors.townCity && (
-                <span className="text-xs text-destructive font-medium">
-                  {errors.townCity}
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Province</label>
-              <select
-                name="province"
-                value={formValues.province || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent cursor-pointer"
+            {/* PROVINCE */}
+            <Field>
+              {renderLabel("Province", true)}
+              <Select
+                defaultValue={form.getValues("province")}
+                onValueChange={(value) => form.setValue("province", value)}
               >
-                <option value="Western Province">Western Province</option>
-                <option value="Central Province">Central Province</option>
-                <option value="Dhaka Division">Dhaka Division</option>
-              </select>
-            </div>
+                <SelectTrigger className=" rounded-xl border border-muted-foreground/40 p-6 bg-transparent focus:ring-1 focus:ring-furniro-gold transition-all">
+                  <SelectValue placeholder="Select Province" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Dhaka Division">Dhaka Division</SelectItem>
+                  <SelectItem value="Western Province">
+                    Western Province
+                  </SelectItem>
+                  <SelectItem value="Central Province">
+                    Central Province
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError errors={[form.formState.errors.province]} />
+            </Field>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">ZIP code</label>
-              <input
-                type="text"
-                name="zipCode"
-                value={formValues.zipCode || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-              />
-              {errors.zipCode && (
-                <span className="text-xs text-destructive font-medium">
-                  {errors.zipCode}
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Phone</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formValues.phone || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-              />
-              {errors.phone && (
-                <span className="text-xs text-destructive font-medium">
-                  {errors.phone}
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Email address</label>
-              <input
-                type="email"
-                name="email"
-                value={formValues.email || ""}
-                onChange={handleInputChange}
-                className="h-14 border border-muted-foreground/40 rounded-xl px-4 focus-visible:outline-furniro-gold bg-transparent"
-              />
-              {errors.email && (
-                <span className="text-xs text-destructive font-medium">
-                  {errors.email}
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2 pt-4">
+            {/* TEXTAREA */}
+            <Field>
+              {renderLabel("Additional Information", false)}
               <textarea
-                name="additionalInfo"
-                placeholder="Additional information"
-                value={formValues.additionalInfo || ""}
-                onChange={handleInputChange}
+                {...form.register("additionalInfo")}
                 rows={4}
-                className="border border-muted-foreground/40 rounded-xl p-4 focus-visible:outline-furniro-gold bg-transparent resize-none"
+                placeholder="Additional information"
+                className="w-full rounded-xl border border-muted-foreground/40 p-4 bg-transparent resize-none outline-none focus:border-furniro-gold focus:ring-1 focus:ring-furniro-gold transition-all duration-200 text-sm"
               />
-            </div>
+              <FieldError errors={[form.formState.errors.additionalInfo]} />
+            </Field>
           </div>
 
-          {/* Checkout Review Metrics Frame Summary */}
+          {/* RIGHT PANEL */}
           <div className="pt-4 lg:pt-14">
             <div className="w-full space-y-4 border-b border-border/20 pb-6 mb-6">
-              <div className="flex justify-between font-medium text-lg sm:text-xl">
+              <div className="flex justify-between font-medium font-heading text-lg sm:text-xl">
                 <span>Product</span>
                 <span>Subtotal</span>
               </div>
+
               {items.map((item) => (
                 <div
                   key={item.product.id}
                   className="flex justify-between text-sm sm:text-base text-muted-foreground"
                 >
-                  <span className="truncate max-w-[200px] sm:max-w-xs">
-                    {item.product.title}{" "}
-                    <strong className="text-foreground font-medium text-xs">
-                      X {item.quantity}
+                  <span className="truncate max-w-[220px]">
+                    {item.product.title}
+                    <strong className="text-foreground text-xs ml-1 font-sans">
+                      x {item.quantity}
                     </strong>
                   </span>
-                  <span className="text-foreground font-light">
+                  <span className="text-foreground">
                     $
                     {(item.product.price * item.quantity).toLocaleString(
                       undefined,
-                      { minimumFractionDigits: 2 },
+                      { minimumFractionDigits: 2 }
                     )}
                   </span>
                 </div>
               ))}
-              <div className="flex justify-between text-sm sm:text-base pt-2">
-                <span className="font-normal">Subtotal</span>
-                <span className="font-light">
-                  $
-                  {subtotal.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
+
               <div className="flex justify-between pt-2">
-                <span className="font-normal text-base">Total</span>
-                <span className="text-furniro-gold font-bold text-xl sm:text-2xl">
+                <span>Subtotal</span>
+                <span>
+                  $
+                  {subtotal.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+
+              <div className="flex justify-between pt-2">
+                <span className="text-lg font-medium font-heading">Total</span>
+                <span className="text-2xl font-bold text-furniro-gold transition-colors duration-300">
                   $
                   {subtotal.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
@@ -334,66 +260,105 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Payment Systems Routing Elements */}
-            <div className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-3 font-medium text-base text-foreground cursor-pointer">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="bank-transfer"
-                    checked={formValues.paymentMethod === "bank-transfer"}
-                    onChange={handleInputChange}
-                    className="accent-foreground size-4"
-                  />
-                  Direct Bank Transfer
-                </label>
-                {formValues.paymentMethod === "bank-transfer" && (
-                  <p className="text-muted-foreground text-sm font-light leading-relaxed pl-7 text-justify">
-                    Make your payment directly into our bank account. Please use
-                    your Order ID as the payment reference. Your order will not
-                    be shipped until the funds have cleared in our account.
-                  </p>
-                )}
-              </div>
+            {/* PAYMENT CONTEXT AND ACCORDIONS */}
+            <Field>
+              <RadioGroup
+                defaultValue={form.getValues("paymentMethod")}
+                onValueChange={(value) =>
+                  form.setValue(
+                    "paymentMethod",
+                    value as "bank-transfer" | "cod"
+                  )
+                }
+                className="space-y-4"
+              >
+                <div className="space-y-1">
+                  <label className="flex items-center gap-3 cursor-pointer select-none font-medium text-sm">
+                    <RadioGroupItem
+                      value="bank-transfer"
+                      className="transition-all duration-200 border-muted-foreground/40 data-[state=checked]:border-furniro-gold data-[state=checked]:text-furniro-gold"
+                    />
+                    <span
+                      className={
+                        selectedPaymentMethod === "bank-transfer"
+                          ? "text-foreground font-semibold"
+                          : "text-muted-foreground"
+                      }
+                    >
+                      Direct Bank Transfer
+                    </span>
+                  </label>
+                  <div
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      selectedPaymentMethod === "bank-transfer"
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="text-sm text-muted-foreground pl-7 pb-2 pt-1 leading-relaxed text-justify font-light">
+                        Make your payment directly into our bank account. Please
+                        use your Order ID as the payment reference. Your order
+                        will not be shipped until the funds have cleared in our
+                        account.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="flex flex-col gap-2 pt-2">
-                <label className="flex items-center gap-3 font-medium text-base text-muted-foreground/80 checked:text-foreground cursor-pointer">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cod"
-                    checked={formValues.paymentMethod === "cod"}
-                    onChange={handleInputChange}
-                    className="accent-foreground size-4"
-                  />
-                  Cash On Delivery
-                </label>
-                {formValues.paymentMethod === "cod" && (
-                  <p className="text-muted-foreground text-sm font-light leading-relaxed pl-7 text-justify">
-                    Pay with cash directly upon structural package delivery
-                    straight to your doorstep address destination.
-                  </p>
-                )}
-              </div>
-            </div>
+                <div className="space-y-1">
+                  <label className="flex items-center gap-3 cursor-pointer select-none font-medium text-sm">
+                    <RadioGroupItem
+                      value="cod"
+                      className="transition-all duration-200 border-muted-foreground/40 data-[state=checked]:border-furniro-gold data-[state=checked]:text-furniro-gold"
+                    />
+                    <span
+                      className={
+                        selectedPaymentMethod === "cod"
+                          ? "text-foreground font-semibold"
+                          : "text-muted-foreground"
+                      }
+                    >
+                      Cash On Delivery
+                    </span>
+                  </label>
+                  <div
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      selectedPaymentMethod === "cod"
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="text-sm text-muted-foreground pl-7 pb-2 pt-1 leading-relaxed text-justify font-light">
+                        Pay with cash directly upon delivery straight to your
+                        doorstep address destination safely.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </RadioGroup>
+              <FieldError errors={[form.formState.errors.paymentMethod]} />
+            </Field>
 
-            <p className="text-sm font-light text-foreground text-justify leading-relaxed mt-8 mb-10">
+            <p className="text-sm leading-relaxed mt-8 mb-10 text-muted-foreground text-justify font-light">
               Your personal data will be used to support your experience
-              throughout this website, to manage access to your account, and for
-              other purposes described in our{" "}
-              <span className="font-semibold cursor-pointer">
-                privacy policy.
+              throughout this website and for other purposes described in our{" "}
+              <span className="font-semibold text-foreground cursor-pointer hover:underline">
+                privacy policy
               </span>
+              .
             </p>
 
-            <button
-              type="submit"
-              disabled={isProcessing || items.length === 0}
-              className="w-full sm:w-auto mx-auto block px-24 h-14 border border-foreground rounded-xl text-base font-normal hover:bg-foreground hover:text-background transition-colors cursor-pointer bg-transparent disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
-            >
-              {isProcessing ? "Processing..." : "Place order"}
-            </button>
+            <div className="flex justify-center items-center">
+              <Button
+                type="submit"
+                disabled={isProcessing || items.length === 0}
+                className="w-full p-6 rounded-xl border border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background transition-all duration-300 shadow-sm cursor-pointer active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed font-heading"
+              >
+                {isProcessing ? "Processing..." : "Place Order"}
+              </Button>
+            </div>
           </div>
         </form>
       </div>
