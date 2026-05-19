@@ -34,7 +34,7 @@ export default function AdminCategoriesPage() {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [API_BASE]);
 
   const openModal = (category: Category | null = null) => {
     setEditingCategory(category);
@@ -53,12 +53,18 @@ export default function AdminCategoriesPage() {
       name: formData.name,
       image: formData.image,
     };
+
+    // Validating using Zod
     const validation = categorySchema.safeParse(payload);
     if (!validation.success) {
+      // Using .flatten() to easily map Zod errors to our state
+      const fieldErrors = validation.error.flatten().fieldErrors;
       const fErr: Record<string, string> = {};
-      validation.error.errors.forEach((err) => {
-        if (err.path[0]) fErr[err.path[0].toString()] = err.message;
+
+      Object.entries(fieldErrors).forEach(([key, messages]) => {
+        if (messages && messages.length > 0) fErr[key] = messages[0];
       });
+
       setErrors(fErr);
       return;
     }
@@ -120,7 +126,7 @@ export default function AdminCategoriesPage() {
             <div className="flex items-center gap-3 min-w-0">
               <img
                 src={category.image}
-                alt=""
+                alt={category.name}
                 className="size-12 rounded-xl object-cover bg-muted border border-border transition-transform duration-300 group-hover:scale-105"
               />
               <p className="font-heading font-semibold text-sm text-foreground truncate">
