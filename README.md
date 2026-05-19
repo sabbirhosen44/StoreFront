@@ -1,12 +1,10 @@
 # StoreFront — E-commerce Platform
 
-A Next.js e-commerce storefront built with TypeScript, Redux, and Tailwind CSS. Uses the EscuelaJS API for products, categories, and authentication.
+A Next.js e-commerce frontend project built with TypeScript, Redux, and Tailwind CSS. Uses the EscuelaJS API for products, categories, and authentication.
 
 **Live Demo:** [https://store-front-22f1.vercel.app/](https://store-front-22f1.vercel.app/)
 
 **Design Inspiration:** [E-commerce Website Web Page Design UI Kit](https://www.figma.com/community/file/1252561852327562039/ecommerce-website-web-page-design-ui-kit-interior-landing-page) on Figma Community
-
-**Submission Date:** May 19, 2026
 
 ---
 
