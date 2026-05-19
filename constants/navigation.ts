@@ -9,7 +9,7 @@ export const NAV_LINKS: NavLink[] = [
 ];
 
 export const HEADER_ACTIONS: HeaderAction[] = [
-    { id: 1, icon: UserRound, label: "Account", showOnMobile: false },
+    { id: 1, icon: UserRound, label: "Account", showOnMobile: true },
     { id: 2, icon: Search, label: "Search", showOnMobile: true },
     { id: 3, icon: Heart, label: "Wishlist", showOnMobile: false },
     { id: 4, icon: ShoppingCart, label: "Cart", showOnMobile: true, hasBadge: true },

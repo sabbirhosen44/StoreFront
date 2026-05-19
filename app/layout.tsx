@@ -1,6 +1,7 @@
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { StoreProvider } from "@/components/store-provider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { StoreProvider } from "@/components/providers/StoreProvider";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Montserrat, Poppins } from "next/font/google";
@@ -42,11 +43,13 @@ export default function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
-            <div className="flex min-h-screen flex-col bg-background text-foreground">
-              <Header />
-              <main className="flex-1 bg-background">{children}</main>
-              <Footer />
-            </div>
+            <AuthProvider>
+              <div className="flex min-h-screen flex-col bg-background text-foreground">
+                <Header />
+                <main className="flex-1 bg-background">{children}</main>
+                <Footer />
+              </div>
+            </AuthProvider>
           </ThemeProvider>
         </StoreProvider>
       </body>
