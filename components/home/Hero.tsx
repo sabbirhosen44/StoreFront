@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
-    <section className="relative w-full min-h-[calc(100vh-5rem)] bg-[url('/images/hero-bg.jpg')] bg-cover bg-center md:bg-left flex items-center py-12 md:py-0 overflow-hidden">
+    <section className="relative w-full min-h-[calc(100vh-20rem)] bg-[url('/images/hero-bg.jpg')] bg-cover bg-center md:bg-left flex items-center py-12 md:py-0 overflow-hidden">
       <div className="absolute inset-0 bg-black/40 animate-fade-in duration-700" />
 
       <div className="relative z-10 container-center w-full flex justify-center md:justify-end">

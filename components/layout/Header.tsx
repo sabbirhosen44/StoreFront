@@ -4,11 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HEADER_ACTIONS, NAV_LINKS } from "@/constants/navigation";
-import { Menu, LogIn, UserPlus } from "lucide-react";
+import {
+  Menu,
+  LogIn,
+  UserPlus,
+  LayoutDashboard,
+  User,
+  LogOut,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { toggleSidebar } from "@/store/slices/cartSlice";
+import { logout } from "@/store/slices/authSlice";
 import CartSidebar from "@/components/cart/CartSidebar";
 import { useRouter } from "next/navigation";
 import {
@@ -31,6 +39,11 @@ export default function Header() {
     (sum, item) => sum + item.quantity,
     0
   );
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background py-4 shadow-sm border-b border-border">
@@ -104,14 +117,6 @@ export default function Header() {
             );
 
             if (isAccountButton) {
-              if (user) {
-                return (
-                  <Link key={action.id} href="/profile">
-                    {renderButtonContent()}
-                  </Link>
-                );
-              }
-
               return (
                 <DropdownMenu key={action.id}>
                   <DropdownMenuTrigger asChild>
@@ -122,23 +127,55 @@ export default function Header() {
                     className="w-48 mt-2 rounded-xl border border-border bg-card p-1 shadow-md animate-in fade-in slide-in-from-top-2 duration-200"
                   >
                     <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 font-heading">
-                      Welcome Guest
+                      {user ? `Hi, ${user.name}` : "Welcome Guest"}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-border/60" />
-                    <DropdownMenuItem
-                      onClick={() => router.push("/login")}
-                      className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-accent hover:text-furniro-gold transition-colors duration-150"
-                    >
-                      <LogIn className="size-4 opacity-70" />
-                      <span>Sign In</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => router.push("/register")}
-                      className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-accent hover:text-furniro-gold transition-colors duration-150"
-                    >
-                      <UserPlus className="size-4 opacity-70" />
-                      <span>Create Account</span>
-                    </DropdownMenuItem>
+
+                    {user ? (
+                      <>
+                        {user.role === "admin" && (
+                          <DropdownMenuItem
+                            onClick={() => router.push("/admin")}
+                            className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-accent text-furniro-gold transition-colors duration-150"
+                          >
+                            <LayoutDashboard className="size-4 opacity-70" />
+                            <span>Dashboard</span>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() => router.push("/profile")}
+                          className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-accent transition-colors duration-150"
+                        >
+                          <User className="size-4 opacity-70" />
+                          <span>My Profile</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-border/60" />
+                        <DropdownMenuItem
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-destructive/10 text-destructive transition-colors duration-150"
+                        >
+                          <LogOut className="size-4 opacity-70" />
+                          <span>Logout</span>
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => router.push("/login")}
+                          className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-accent hover:text-furniro-gold transition-colors duration-150"
+                        >
+                          <LogIn className="size-4 opacity-70" />
+                          <span>Sign In</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => router.push("/register")}
+                          className="flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg cursor-pointer focus:bg-accent hover:text-furniro-gold transition-colors duration-150"
+                        >
+                          <UserPlus className="size-4 opacity-70" />
+                          <span>Create Account</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               );
@@ -169,12 +206,28 @@ export default function Header() {
                   <hr className="w-1/2 border-border/60 my-2" />
 
                   {user ? (
-                    <Link
-                      href="/profile"
-                      className="text-lg font-medium text-furniro-gold hover:opacity-80 transition-opacity"
-                    >
-                      Account ({user.name})
-                    </Link>
+                    <div className="flex flex-col items-center gap-4">
+                      {user.role === "admin" && (
+                        <Link
+                          href="/admin"
+                          className="text-lg font-medium text-furniro-gold hover:opacity-80 transition-opacity"
+                        >
+                          Admin Dashboard
+                        </Link>
+                      )}
+                      <Link
+                        href="/profile"
+                        className="text-lg font-medium hover:text-furniro-gold transition-colors"
+                      >
+                        Account ({user.name})
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="text-sm font-medium text-destructive hover:opacity-80 transition-opacity"
+                      >
+                        Logout
+                      </button>
+                    </div>
                   ) : (
                     <div className="flex flex-col items-center gap-4">
                       <Link

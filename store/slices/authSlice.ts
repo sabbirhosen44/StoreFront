@@ -34,6 +34,7 @@ export const loginUser = createAsyncThunk(
             const user: User = await profileRes.json();
 
             Cookies.set("access_token", tokens.access_token, { expires: 7, secure: true });
+            Cookies.set("user_role", user.role, { expires: 7, secure: true });
 
             return { user, accessToken: tokens.access_token };
         } catch (err: any) {
@@ -75,6 +76,7 @@ const authSlice = createSlice({
             state.accessToken = null;
             state.error = null;
             Cookies.remove("access_token");
+            Cookies.remove("user_role");
         },
         setProfile: (state, action: PayloadAction<User>) => {
             state.user = action.payload;

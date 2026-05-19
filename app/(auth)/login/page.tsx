@@ -17,7 +17,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const { isLoading, error } = useAppSelector((state) => state.auth);
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const {
     register,
@@ -31,7 +31,14 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     const result = await dispatch(loginUser(data));
     if (loginUser.fulfilled.match(result)) {
-      router.push(callbackUrl);
+      const user = result.payload.user;
+
+      if (user?.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push(callbackUrl || "/profile");
+      }
+
       router.refresh();
     }
   };
