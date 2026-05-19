@@ -2,6 +2,10 @@
 
 A Next.js e-commerce storefront built with TypeScript, Redux, and Tailwind CSS. Uses the EscuelaJS API for products, categories, and authentication.
 
+**Live Demo:** [https://store-front-22f1.vercel.app/](https://store-front-22f1.vercel.app/)
+
+**Design Inspiration:** [E-commerce Website Web Page Design UI Kit](https://www.figma.com/community/file/1252561852327562039/ecommerce-website-web-page-design-ui-kit-interior-landing-page) on Figma Community
+
 **Submission Date:** May 19, 2026
 
 ---
@@ -420,9 +424,8 @@ storefront/
 
 ### Short Term (Next Release)
 
-- [ ] Product search functionality
 - [ ] Wishlist feature with persistence
-- [ ] Product ratings and reviews UI
+- [ ] Product ratings and reviews Functionality
 - [ ] Order history tracking
 - [ ] User profile editing
 - [ ] Email verification on signup
@@ -433,9 +436,6 @@ storefront/
 
 - [ ] Real payment processing (Stripe/PayPal integration)
 - [ ] Email notifications (order confirmation, shipping updates)
-- [ ] Admin dashboard analytics and charts
-- [ ] Bulk product operations in admin
-- [ ] Advanced product filtering (price range, ratings, etc.)
 - [ ] User role management (staff, moderator)
 - [ ] Product recommendations engine
 
