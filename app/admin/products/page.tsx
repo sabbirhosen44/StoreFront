@@ -60,13 +60,13 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     fetchProducts();
-  }, [offset]);
+  }, [offset, API_BASE]);
 
   useEffect(() => {
     fetch(`${API_BASE}/categories`)
       .then((res) => res.json())
       .then((data) => setCategories(data));
-  }, []);
+  }, [API_BASE]);
 
   const openCreateModal = () => {
     setEditingProduct(null);
@@ -106,11 +106,15 @@ export default function AdminProductsPage() {
 
     const validation = productSchema.safeParse(payload);
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {};
-      validation.error.errors.forEach((err) => {
-        if (err.path[0]) fieldErrors[err.path[0].toString()] = err.message;
+      // Using .flatten() to map Zod validation errors to our state
+      const fieldErrors = validation.error.flatten().fieldErrors;
+      const fErr: Record<string, string> = {};
+
+      Object.entries(fieldErrors).forEach(([key, messages]) => {
+        if (messages && messages.length > 0) fErr[key] = messages[0];
       });
-      setErrors(fieldErrors);
+
+      setErrors(fErr);
       return;
     }
 
