@@ -22,9 +22,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { useToast } from "@/components/ui/toast";
+import { addOrder } from "@/store/slices/orderSlice";
+
 export default function CheckoutPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { toast } = useToast();
   const { items } = useAppSelector((state) => state.cart);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -59,12 +63,31 @@ export default function CheckoutPage() {
 
     setTimeout(() => {
       setIsProcessing(false);
-      alert(
-        "🎉 Order tracking finalized successfully! Payment verification complete."
+      dispatch(
+        addOrder({
+          items: [...items],
+          totalAmount: subtotal,
+          paymentMethod: data.paymentMethod,
+          shippingAddress: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            streetAddress: data.streetAddress,
+            townCity: data.townCity,
+            country: data.country,
+            zipCode: data.zipCode,
+            phone: data.phone,
+            email: data.email,
+          },
+        })
       );
       dispatch(clearCart());
-      router.push("/");
-    }, 2500);
+      toast(
+        "🎉 Your order has been placed successfully! View order details below.",
+        "success",
+        "Order Confirmed"
+      );
+      router.push("/orders");
+    }, 1500);
   };
 
   const renderLabel = (label: string, required?: boolean) => (
@@ -94,6 +117,7 @@ export default function CheckoutPage() {
               src="/images/logo.png"
               alt="Logo"
               fill
+              sizes="40px"
               className="object-contain"
             />
           </div>

@@ -1,5 +1,6 @@
 import CategorySlider from "@/components/home/CategorySlider";
 import { Category } from "@/types/category";
+import { API_BASE_URL } from "@/lib/constants";
 
 export default async function Categories() {
   let categories: Category[] = [];
@@ -7,7 +8,7 @@ export default async function Categories() {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`,
+      `${API_BASE_URL}/categories`,
       {
         next: { revalidate: 3600 },
       }

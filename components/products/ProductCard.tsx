@@ -5,9 +5,10 @@ import { Heart, Share2, ArrowRightLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useAppDispatch } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store";
 import { addToCart, toggleSidebar } from "@/store/slices/cartSlice";
+import { toggleWishlist } from "@/store/slices/wishlistSlice";
+import { useToast } from "@/components/ui/toast";
 
 interface ProductCardProps {
   product: Product;
@@ -16,7 +17,10 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, viewMode }: ProductCardProps) {
   const dispatch = useAppDispatch();
-  const [isLiked, setIsLiked] = useState(false);
+  const { toast } = useToast();
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const isLiked = wishlistItems.some((item) => item.id === product.id);
+
   const thumbnail = product.images?.[0] || "https://placehold.co/600x400";
 
   const isSale = product.id % 3 === 0;
@@ -27,6 +31,18 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
     e.stopPropagation();
     dispatch(addToCart({ product, quantity: 1 }));
     dispatch(toggleSidebar());
+    toast(`"${product.title}" added to cart!`, "success");
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(toggleWishlist(product));
+    if (isLiked) {
+      toast(`Removed "${product.title}" from wishlist`, "info");
+    } else {
+      toast(`Saved "${product.title}" to wishlist!`, "success");
+    }
   };
 
   // --- LIST VIEW MODE ---
@@ -88,7 +104,7 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
               Add to cart
             </Button>
             <button
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={handleToggleWishlist}
               className={`flex items-center gap-1.5 text-sm font-medium hover:text-furniro-gold transition-colors cursor-pointer ${
                 isLiked
                   ? "text-red-500 hover:text-red-600"
@@ -96,10 +112,7 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
               }`}
             >
               <Heart className={`size-5 ${isLiked ? "fill-current" : ""}`} />{" "}
-              Like
-            </button>
-            <button className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-furniro-gold transition-colors cursor-pointer">
-              <ArrowRightLeft className="size-5" /> Compare
+              {isLiked ? "Saved" : "Like"}
             </button>
           </div>
         </div>
@@ -146,20 +159,14 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
             Add to cart
           </Button>
           <div className="flex items-center gap-5 text-white text-sm font-semibold select-none">
-            <button className="flex items-center gap-1 hover:text-furniro-gold transition-colors cursor-pointer">
-              <Share2 className="size-4" /> Share
-            </button>
-            <button className="flex items-center gap-1 hover:text-furniro-gold transition-colors cursor-pointer">
-              <ArrowRightLeft className="size-4" /> Compare
-            </button>
             <button
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={handleToggleWishlist}
               className={`flex items-center gap-1 hover:text-red-400 transition-colors cursor-pointer ${
-                isLiked ? "text-red-500" : ""
+                isLiked ? "text-red-400" : ""
               }`}
             >
               <Heart className={`size-4 ${isLiked ? "fill-current" : ""}`} />{" "}
-              Like
+              {isLiked ? "Saved" : "Like"}
             </button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import ProductActionsOverlay from "@/components/home/ProductActionsOverlay";
 import { Product } from "@/types/product";
+import { API_BASE_URL } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -29,7 +30,7 @@ export default async function FeaturedProducts() {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`,
+      `${API_BASE_URL}/products`,
       {
         next: { revalidate: 60 },
       },

@@ -3,12 +3,15 @@
 import { useAppDispatch, useAppSelector } from "@/store";
 import { logout } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
-import { LogOut, ShieldCheck, Mail, User, Calendar } from "lucide-react";
+import { LogOut, ShieldCheck, Mail, User, Calendar, PackageCheck, Heart } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { user } = useAppSelector((state) => state.auth);
+  const { orders } = useAppSelector((state) => state.order);
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -41,9 +44,30 @@ export default function ProfilePage() {
             {user.name}
           </h2>
 
-          <div className="inline-flex items-center gap-1 bg-furniro-gold/10 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-furniro-gold border border-furniro-gold/20">
+          <div className="inline-flex items-center gap-1 bg-furniro-gold/10 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-furniro-gold border border-furniro-gold/20 mb-6">
             <ShieldCheck className="size-3" />
             <span>{user.role}</span>
+          </div>
+
+          {/* QUICK STATS */}
+          <div className="w-full grid grid-cols-2 gap-2 text-xs">
+            <Link
+              href="/orders"
+              className="p-3 rounded-2xl bg-background/60 border border-border/80 hover:border-furniro-gold/60 transition-all flex flex-col items-center gap-1"
+            >
+              <PackageCheck className="size-5 text-furniro-gold" />
+              <span className="font-bold text-sm">{orders.length}</span>
+              <span className="text-muted-foreground text-[10px]">Orders</span>
+            </Link>
+
+            <Link
+              href="/wishlist"
+              className="p-3 rounded-2xl bg-background/60 border border-border/80 hover:border-furniro-gold/60 transition-all flex flex-col items-center gap-1"
+            >
+              <Heart className="size-5 text-rose-500" />
+              <span className="font-bold text-sm">{wishlistItems.length}</span>
+              <span className="text-muted-foreground text-[10px]">Wishlist</span>
+            </Link>
           </div>
         </div>
 
@@ -99,10 +123,18 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end border-t border-border/60 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border/60 pt-4">
+            <Link
+              href="/orders"
+              className="w-full sm:w-auto px-5 h-11 rounded-xl bg-accent hover:bg-accent/80 text-foreground font-medium text-xs flex items-center justify-center gap-2 transition-all"
+            >
+              <PackageCheck className="size-4" />
+              <span>View Order History</span>
+            </Link>
+
             <button
               onClick={handleLogout}
-              className="w-full sm:w-auto px-6 h-11 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 font-medium transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.98] transform"
+              className="w-full sm:w-auto px-6 h-11 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 font-medium text-xs transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-[0.98] transform"
             >
               <LogOut className="size-4" />
               <span>Logout Session</span>

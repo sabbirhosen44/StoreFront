@@ -1,550 +1,190 @@
-# StoreFront — E-commerce Platform
+# 🛒 StoreFront — E-commerce Platform
 
-A Next.js e-commerce frontend project built with TypeScript, Redux, and Tailwind CSS. Uses the EscuelaJS API for products, categories, and authentication.
+A modern, high-performance, full-featured e-commerce frontend web application built with **Next.js 16 (App Router)**, **TypeScript**, **Redux Toolkit**, and **Tailwind CSS v4**.
 
-**Live Demo:** [https://store-front-22f1.vercel.app/](https://store-front-22f1.vercel.app/)
+Integrated with the external **EscuelaJS REST API**, StoreFront includes a public customer storefront, dynamic catalog filtering, shopping cart & wishlist persistence, multi-step checkout with order tracking, role-based access control, an admin dashboard, and an automated Vitest test suite.
 
-**Design Inspiration:** [E-commerce Website Web Page Design UI Kit](https://www.figma.com/community/file/1252561852327562039/ecommerce-website-web-page-design-ui-kit-interior-landing-page) on Figma Community
-
----
-
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Rendering Strategy](#rendering-strategy)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Tradeoffs](#tradeoffs)
-- [Performance Considerations](#performance-considerations)
-- [Challenges & Solutions](#challenges--solutions)
-- [Future Improvements](#future-improvements)
-- [Setup](#setup)
-- [Environment Variables](#environment-variables)
-- [Running the Application](#running-the-application)
-- [Deployment](#deployment)
-
----
-
-## 🎯 Project Overview
-
-StoreFront is a full-featured e-commerce platform demonstrating modern Next.js patterns, scalable frontend architecture, and solid engineering practices. The application showcases Next.js 16 with App Router, TypeScript for type safety, and a clean component hierarchy.
-
-**Key Objectives:**
-
-- Build a scalable, maintainable e-commerce application
-- Demonstrate Next.js App Router patterns and best practices
-- Implement robust authentication with middleware-based route protection
-- Create responsive, accessible UI components with shadcn/Radix UI
-- Optimize for performance and user experience
-- Provide admin capabilities for product and category management
-
-**Technology Approach:**
-
-- Frontend-only architecture using external EscuelaJS API
-- Redux Toolkit for predictable, debuggable state management
-- TypeScript throughout for type safety
-- Zod schemas for runtime validation
-- Next.js middleware for server-side route protection
-
----
-
-## ✨ Features
-
-### Public Storefront
-
-- **Home Page** — Hero section, featured products carousel, category slider
-- **Product Listing** — Grid view with pagination, category filtering, price sorting
-- **Product Details** — Full product information, related products, add to cart
-- **Shopping Cart** — View items, update quantities, remove items, persistent storage
-- **Checkout** — Multi-field form with validation, order summary
-- **Theme Switching** — Dark/light mode toggle with persistence
-
-### Authentication
-
-- **User Registration** — Email, password, name, avatar URL
-- **User Login** — Email/password authentication with role-based redirects
-- **Protected Routes** — Middleware-based route protection
-- **User Profile** — Display profile information and logout
-
-### Admin Dashboard
-
-- **Products Management** — View, create, edit, delete products with pagination
-- **Categories Management** — Manage categories with create, edit, delete
-- **Users Management** — View users list with search and filtering
-- **Dashboard** — Display product, category, and user counts
-
-> **Admin login**
->
-> - Email: `adminsabbir@gmail.com`
-> - Password: `123456`
-
----
-
-## 🏗 Architecture
-
-### Design Principles
-
-1. **Component Organization**
-
-   - Components organized by feature/domain (home, products, cart, etc.)
-   - UI primitives in separate `ui/` folder for reusability
-   - Providers (Auth, Store, Theme) for cross-app context
-
-2. **State Management**
-
-   - Redux Toolkit for global state (cart items, user auth)
-   - React Context for theme switching via `next-themes`
-   - Local component state for UI-only values
-
-3. **Type Safety**
-
-   - Strict TypeScript configuration
-   - Zod schemas as single source of truth for validation
-   - Inferred TypeScript types from Zod schemas
-   - Comprehensive type definitions in `types/` folder
-
-4. **External API Integration**
-   - All data from EscuelaJS API
-   - API base URL configured via environment variable
-   - Token-based authentication for protected endpoints
-
-### Data Flow
-
-```
-User Request
-    ↓
-Middleware (Authentication Check)
-    ↓
-Page/Route Handler
-    ↓
-Redux Store (Global State)
-    ↓
-Components (Render UI)
-    ↓
-User Interaction
-    ↓
-API Call via Redux Thunk
-    ↓
-State Update & Re-render
-```
-
----
-
-## 🎨 Rendering Strategy
-
-### Server vs. Client Components
-
-**Server Components (Default):**
-
-- Layout components (Header, Footer)
-- Page shells that don't need interactivity
-- Benefits: Reduced client JS, direct server access (though limited by external API)
-
-**Client Components (Used for):**
-
-- Forms (login, register, checkout, admin)
-- Interactive filters and search
-- Cart operations and theme switching
-- Admin CRUD operations
-- Benefits: Smooth user interactions without full page refreshes
-
-### Rendering Approach
-
-- **Server-rendered layouts** for structural components
-- **Client-rendered pages** for interactive features
-- **Static generation** for home page and public pages
-- **Dynamic rendering** for products and user-specific pages
-
-### Route Protection Flow
-
-```
-Request → Middleware (check token)
-   ├─ Valid token → Allow request
-   ├─ Invalid/Missing → Redirect to login
-   └─ Admin route → Check role, redirect if not admin
-```
-
----
-
-## 🛠 Tech Stack
-
-| Technology          | Version | Purpose                         |
-| ------------------- | ------- | ------------------------------- |
-| **Next.js**         | 16.2.6  | React framework with App Router |
-| **React**           | 19.2.4  | UI library                      |
-| **TypeScript**      | 5       | Type-safe development           |
-| **Tailwind CSS**    | 4       | Utility-first styling           |
-| **Redux Toolkit**   | 2.11.2  | Cart and auth state management  |
-| **React Hook Form** | 7.76.0  | Form handling and validation    |
-| **Zod**             | 4.4.3   | Schema validation               |
-| **shadcn/Radix UI** | Latest  | UI components                   |
-| **next-themes**     | 0.4.6   | Dark/light mode switching       |
-| **Swiper**          | 12.1.4  | Product carousel                |
-| **js-cookie**       | 3.0.7   | Cookie management               |
+🌐 **Live Demo:** [https://store-front-22f1.vercel.app/](https://store-front-22f1.vercel.app/)  
+🎨 **Design Inspiration:** [E-commerce Website Web Page Design UI Kit](https://www.figma.com/community/file/1252561852327562039/ecommerce-website-web-page-design-ui-kit-interior-landing-page) on Figma Community
 
 ---
 
 ## 📁 Project Structure
 
-```
+```text
 storefront/
 ├── app/                          # Next.js App Router
-│   ├── (auth)/                   # Auth routes
+│   ├── (auth)/                   # Authentication Routes (Login & Register)
 │   │   ├── login/page.tsx
 │   │   └── register/page.tsx
-│   ├── (store)/                  # Main storefront
-│   │   ├── page.tsx              # Home page
-│   │   ├── products/page.tsx     # Product listing
-│   │   ├── products/[id]/page.tsx # Product details
-│   │   ├── cart/page.tsx
-│   │   ├── checkout/page.tsx
-│   │   └── profile/page.tsx
-│   ├── admin/                    # Admin dashboard
-│   │   ├── page.tsx              # Dashboard
-│   │   ├── products/page.tsx
-│   │   ├── categories/page.tsx
-│   │   └── users/page.tsx
-│   ├── layout.tsx
-│   ├── globals.css
-│   └── middleware.ts             # Route protection
+│   ├── (store)/                  # Public Storefront Layout & Pages
+│   │   ├── page.tsx              # Home Page (Hero, Categories, Featured Products)
+│   │   ├── products/             # Product Catalog & Dynamic Filtering
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx     # Product Details Page
+│   │   ├── cart/page.tsx         # Shopping Cart Page
+│   │   ├── checkout/page.tsx     # Multi-step Checkout Form
+│   │   ├── profile/page.tsx      # User Profile & Stats Overview
+│   │   ├── wishlist/page.tsx     # Saved Wishlist Items Page
+│   │   ├── orders/page.tsx       # Order History Tracking Page
+│   │   ├── contact/page.tsx      # Contact Form & Info Cards
+│   │   ├── about/page.tsx        # Brand Story & Mission Page
+│   │   ├── privacy/page.tsx      # Privacy Policy Statement
+│   │   ├── returns/page.tsx      # 30-Day Returns Policy Page
+│   │   └── payment/page.tsx      # Payment Options Info Page
+│   ├── admin/                    # Protected Admin Dashboard
+│   │   ├── page.tsx              # Dashboard Metrics Overview
+│   │   ├── products/page.tsx     # Product Management (CRUD)
+│   │   ├── categories/page.tsx   # Category Management (CRUD)
+│   │   └── users/page.tsx        # User Directory & Filtering
+│   ├── globals.css               # Design System Tokens & Tailwind CSS v4
+│   ├── layout.tsx                # Root App Layout & Providers
+│   └── middleware.ts             # Route Protection & Cookie Guards
 │
-├── components/                   # React components
-│   ├── layout/                   # Header, Footer
-│   ├── home/                     # Hero, Categories, FeaturedProducts
-│   ├── products/                 # ProductGrid, ProductCard, FilterBar
+├── components/                   # React Components
+│   ├── layout/                   # Header (Search, Badges), Footer
+│   ├── home/                     # Hero, CategorySlider, FeaturedProducts
+│   ├── products/                 # ProductCard, ProductGrid, FilterBar
 │   ├── cart/                     # CartSidebar, CartTableItem
-│   ├── ui/                       # Button, Input, Dialog, Select, etc.
+│   ├── ui/                       # Button, Input, Select, Dialog, Toast, Sheet
 │   └── providers/                # AuthProvider, StoreProvider, ThemeProvider
 │
-├── store/                        # Redux state
-│   ├── index.ts
+├── store/                        # Redux Toolkit Global State
+│   ├── index.ts                  # Store Configuration & Typed Hooks
 │   └── slices/
-│       ├── authSlice.ts
-│       └── cartSlice.ts
+│       ├── authSlice.ts          # Auth Session & Cookie Sync
+│       ├── cartSlice.ts          # Shopping Cart & Local Storage Sync
+│       ├── wishlistSlice.ts      # Wishlist Bookmark Persistence
+│       └── orderSlice.ts         # Finalized Orders History
 │
-├── schemas/                      # Zod validation
-│   ├── auth.ts
-│   ├── product.ts
-│   ├── category.ts
-│   └── checkout.ts
+├── schemas/                      # Zod Validation Schemas
+│   ├── auth.ts                   # Login & Registration Schemas
+│   ├── checkout.ts               # Billing & Shipping Address Schema
+│   ├── contact.ts                # Contact Form Validation Schema
+│   ├── category.ts               # Category Management Schema
+│   └── product.ts                # Product CRUD Schema
 │
-├── types/                        # TypeScript types
-├── constants/                    # App constants
-├── lib/                          # Utilities
-├── public/                       # Static assets
-└── middleware.ts                 # Route protection middleware
+├── __tests__/                    # Vitest & React Testing Library Suite
+│   ├── cartSlice.test.ts         # Cart Reducer Unit Tests (6 tests)
+│   ├── wishlistSlice.test.ts     # Wishlist Reducer Unit Tests (4 tests)
+│   ├── authSlice.test.ts         # Auth Reducer Unit Tests (3 tests)
+│   ├── schemas.test.ts           # Zod Schema Unit Tests (4 tests)
+│   └── ProductCard.test.tsx      # Component UI Rendering Tests (2 tests)
+│
+├── types/                        # TypeScript Interfaces & Types
+├── constants/                    # Application Navigation & Constants
+├── lib/                          # Utility Functions & API Helpers
+└── public/                       # Static Assets & Images
 ```
 
 ---
 
-## ⚖️ Tradeoffs
+## ✨ Features Breakdown
 
-### Decision 1: Redux Toolkit vs. Context API
+### 🛍️ Public Storefront
+- **Responsive Home & Catalog:** Hero banner, category slider, featured product grid, and interactive header search overlay.
+- **Product Filtering & Sorting:** Dynamic filtering by category, price range, and price sorting (`searchParams` URL state synchronization).
+- **Shopping Cart & Wishlist:** Real-time item count badges, quantity adjustments, bookmarking, and local storage persistence.
+- **Checkout & Order Tracking:** Multi-field validated checkout form with order creation and `/orders` tracking page.
+- **Support & Policy Pages:** Responsive `/contact` form with validation, `/about`, `/privacy`, `/returns`, and `/payment` pages.
 
-**Choice:** Redux Toolkit for global state (cart, auth)
+### 🔒 Authentication & Route Protection
+- **JWT Cookie Storage:** Secure cookie-based token management for authentication sessions.
+- **Middleware Guards:** Server-side route protection restricting `/admin`, `/checkout`, and `/profile` routes based on user role.
 
-**Pros:**
-
-- DevTools integration for debugging
-- Predictable state updates with actions
-- Middleware support for async operations
-- Clear separation of concerns
-
-**Tradeoff:**
-
-- Slightly larger bundle size (~40KB)
-- More boilerplate than Context API
-
-**Why:** Better debugging and predictability for complex e-commerce state changes
-
-### Decision 2: External API vs. Backend
-
-**Choice:** Use EscuelaJS API instead of building backend
-
-**Pros:**
-
-- No server infrastructure to maintain
-- Focus on frontend implementation
-- Fast development and deployment
-
-**Tradeoff:**
-
-- No custom business logic
-- Limited control over API features
-- Cannot add features not supported by EscuelaJS
-
-**Why:** Demonstrates frontend architecture without backend complexity
-
-### Decision 3: Token Storage in Cookies
-
-**Choice:** Store JWT token in secure cookies with middleware protection
-
-**Pros:**
-
-- Tokens unavailable to JavaScript (secure flag enabled)
-- Middleware can validate before rendering
-- Automatic token sending with requests
-
-**Tradeoff:**
-
-- Cannot access token from JavaScript (by design)
-- Cross-site concerns require proper CORS/CSRF handling
-
-**Why:** More secure than localStorage for sensitive tokens
-
-### Decision 4: Client-Side Forms
-
-**Choice:** Use React Hook Form with Zod validation on client
-
-**Pros:**
-
-- Real-time validation feedback
-- Reduced server requests
-- Better UX with inline error messages
-
-**Tradeoff:**
-
-- Form submission still hits external API
-- No server-side form processing
-
-**Why:** Improves user experience and demonstrates modern form patterns
+### 🛠️ Admin Dashboard (`/admin`)
+- **Product Management:** Create, view, edit, and delete products.
+- **Category Management:** Manage category catalog items.
+- **User Management:** Search and filter registered platform users.
 
 ---
 
-## ⚡ Performance Considerations
+## 🛠 Tech Stack
 
-### 1. Bundle Size
-
-- Current production bundle: ~200KB (gzipped)
-- Tree-shaking eliminates unused code
-- Dynamic imports for route-specific code
-
-### 2. Image Optimization
-
-- Next.js Image component for automatic optimization
-- Responsive images with proper sizing
-- Lazy loading for off-screen images
-
-### 3. Caching Strategy
-
-- Static assets cached for 30 days
-- Redux state persisted to localStorage
-- Cookie-based session management
-
-### 4. Code Splitting
-
-- Automatic route-level code splitting
-- Lazy-loaded components for admin routes
-- Separate bundle for heavy dependencies (Swiper, Radix UI)
-
-### 5. Core Web Vitals Targets
-
-- **LCP:** < 2.5s (largest contentful paint)
-- **FID:** < 100ms (first input delay)
-- **CLS:** < 0.1 (cumulative layout shift)
-
-### 6. Optimization Techniques
-
-- Debounced search/filter operations
-- Memoized components to prevent unnecessary re-renders
-- ISR strategy for product pages
-- Asset compression and minification
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **Next.js** | 16.2.6 | React framework with App Router & RSC |
+| **React** | 19.2.4 | UI library |
+| **TypeScript** | 5.x | Strict type safety |
+| **Tailwind CSS** | 4.x | Utility-first styling & design tokens |
+| **Redux Toolkit** | 2.11.2 | Predictable state management with `localStorage` sync |
+| **React Hook Form** | 7.76.0 | Performance form state handling |
+| **Zod** | 4.4.3 | Runtime schema validation |
+| **Vitest & JSDOM** | Latest | Unit testing framework |
+| **React Testing Library** | Latest | Component UI rendering tests |
+| **next-themes** | 0.4.6 | Dark/light mode theme toggle |
 
 ---
 
-## 🚧 Challenges & Solutions
+## 🧪 Automated Testing Suite
 
-### Challenge 1: Protecting Routes Without Backend
+StoreFront features **19 automated unit and component tests** executed with Vitest and JSDOM:
 
-**Problem:** Middleware needs to verify tokens without direct backend
+```bash
+# Run automated test suite
+npm test
+```
 
-**Solution:**
-
-- Store token in secure HTTP-only cookie
-- Middleware checks cookie presence/validity
-- Verify token structure before allowing access
-- Redirect to login on token failure
-
-### Challenge 2: Redux State Loss on Page Refresh
-
-**Problem:** Redux state is not persisted across browser refresh
-
-**Solution:**
-
-- Implement localStorage sync for cart state
-- Load cart from localStorage on app initialization
-- Sync Redux updates back to localStorage
-- Prevent hydration mismatches with careful initialization
-
-### Challenge 3: Type Safety Across Layers
-
-**Problem:** Ensuring types match between frontend and API responses
-
-**Solution:**
-
-- Define Zod schemas as single source of truth
-- Infer TypeScript types from Zod schemas using `z.infer<>`
-- Validate API responses at runtime
-- Catch type mismatches early with strict TypeScript
-
-### Challenge 4: Admin Route Access Control
-
-**Problem:** Need to prevent non-admin users from accessing admin routes
-
-**Solution:**
-
-- Check user role in middleware
-- Store role in cookie alongside token
-- Verify role before rendering admin pages
-- Redirect unauthorized users to home page
-
-### Challenge 5: Cart Persistence Across Devices
-
-**Problem:** Cart stored locally cannot sync across devices/browsers
-
-**Solution:**
-
-- Accept cross-device limitation for MVP
-- Document that cart is device/browser specific
-- Future improvement: persist cart to backend after login
-
-### Challenge 6: Form Validation Consistency
-
-**Problem:** Validating on client and server separately causes inconsistency
-
-**Solution:**
-
-- Use same Zod schema on client for validation
-- API validates and may return errors
-- Client displays API errors alongside form validation
-- Single source of truth for validation logic
+### Test Coverage Highlights:
+- **Redux Slice Unit Tests:** Validates state mutation, addition, removal, and clear operations for Cart, Wishlist, and Auth slices.
+- **Zod Schema Tests:** Tests runtime validation rules and constraint failures for Checkout and Contact forms.
+- **Component UI Tests:** Verifies `ProductCard` component rendering across Grid and List view modes using React Testing Library.
 
 ---
 
-## 🚀 Future Improvements
+## 🚧 Challenges & Architectural Solutions
 
-### Short Term (Next Release)
+### 1. Route Protection via Server Middleware
+- **Challenge:** Securing client and admin routes without a dedicated custom backend server.
+- **Solution:** Token and role cookies are validated inside Next.js `middleware.ts`. Non-admin users attempting to access `/admin` are automatically redirected to home, while unauthenticated users accessing `/checkout` are redirected to `/login`.
 
-- [ ] Wishlist feature with persistence
-- [ ] Product ratings and reviews Functionality
-- [ ] Order history tracking
-- [ ] User profile editing
-- [ ] Email verification on signup
-- [ ] Unit tests with Vitest
-- [ ] E2E tests with Playwright
+### 2. State Loss Avoidance Across Sessions
+- **Challenge:** Preserving shopping cart, wishlist items, and order history across page refreshes.
+- **Solution:** Integrated Redux Toolkit reducers with client-side `localStorage` synchronization guarded with `typeof window !== "undefined"` checks for SSR safety.
 
-### Medium Term (3 Months)
-
-- [ ] Real payment processing (Stripe/PayPal integration)
-- [ ] Email notifications (order confirmation, shipping updates)
-- [ ] User role management (staff, moderator)
-- [ ] Product recommendations engine
-
-### Long Term (6+ Months)
-
-- [ ] Backend API migration for full control
-- [ ] GraphQL integration
-- [ ] Real-time inventory management
-- [ ] Multi-language support (i18n)
-- [ ] Mobile app (React Native)
-- [ ] Headless CMS integration
-- [ ] Advanced admin features (reporting, exports)
-- [ ] Subscription/recurring purchases
+### 3. Unified Validation Layer
+- **Challenge:** Ensuring consistent validation rules between client form inputs and API payloads.
+- **Solution:** Defined single-source-of-truth Zod schemas in `schemas/` that feed both React Hook Form validation and TypeScript inferred types (`z.infer<>`).
 
 ---
 
-## 🚀 Setup
+## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js 18+ or 20+
 - npm, yarn, or pnpm
 
 ### Installation
 
-1. Clone the repository:
-
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/yourusername/storefront.git
    cd storefront
    ```
 
-2. Install dependencies:
-
+2. **Install dependencies:**
    ```bash
    npm install
    ```
 
-3. Set up environment variables (see below)
+3. **Set up environment variables:**  
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXT_PUBLIC_API_BASE_URL=https://api.escuelajs.co/api/v1
+   ```
 
-4. Run development server:
-
+4. **Run development server:**
    ```bash
    npm run dev
    ```
+   Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
 
 ---
 
-## 🔑 Environment Variables
+## 📜 Available Scripts
 
-Create a `.env.local` file in the root with:
-
-```env
-NEXT_PUBLIC_API_BASE_URL=https://api.escuelajs.co/api/v1
-```
-
-This is the only required variable. All API calls use this base URL.
-
----
-
-## ▶️ Running the Application
-
-### Development
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-### Production Build
-
-```bash
-npm run build
-npm run start
-```
-
-### Linting
-
-```bash
-npm run lint
-```
-
----
-
-## 🌐 Deployment
-
-### Vercel (Recommended)
-
-1. Connect your GitHub repository to Vercel
-2. Set `NEXT_PUBLIC_API_BASE_URL` in Vercel dashboard
-3. Deploy on push to main branch
-
-### Traditional Hosting
-
-```bash
-npm run build
-npm run start
-```
-
----
-
-## 📝 Notes
-
-- **Authentication**: User registration and login use the EscuelaJS API. Tokens are stored in secure cookies.
-- **Cart Persistence**: Cart state is stored in Redux and synced to localStorage for persistence across sessions.
-- **Protected Routes**: `/checkout`, `/profile`, and `/admin` require authentication via middleware.
-- **Admin Access**: Only users with `role: 'admin'` can access the admin dashboard.
-- **API**: All data comes from the EscuelaJS API. No backend server required.
+- `npm run dev` — Starts Next.js development server
+- `npm run build` — Builds the production application bundle
+- `npm run start` — Runs the compiled production build
+- `npm test` — Runs the Vitest automated test suite (19 tests)
+- `npm run lint` — Runs ESLint for code quality inspection

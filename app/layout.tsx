@@ -1,13 +1,14 @@
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { StoreProvider } from "@/components/providers/StoreProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ToastProvider } from "@/components/ui/toast";
 import type { Metadata } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "StoreFront | Modern E-commerce",
-  description: "High quality e-commerce platform for clothing and accessories.",
+  title: "StoreFront | Modern E-commerce Platform",
+  description: "High quality e-commerce platform built with Next.js 16 and TypeScript.",
 };
 
 const poppins = Poppins({
@@ -31,6 +32,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${poppins.variable} ${montserrat.variable}`}
     >
       <body className="antialiased">
@@ -41,7 +43,9 @@ export default function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </AuthProvider>
           </ThemeProvider>
         </StoreProvider>
       </body>
